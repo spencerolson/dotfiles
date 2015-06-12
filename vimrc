@@ -1,130 +1,100 @@
+" Don't try to be vi compatible
 set nocompatible
+
+" Helps force plugins to load correctly when it is turned back on below
+filetype off
+
+" TODO: Load plugins here (pathogen or vundle)
+
+" Turn on syntax highlighting
 syntax on
 
-if &shell == "/usr/bin/sudosh"
-  set shell=/bin/bash
-endif
-
-filetype off
-call pathogen#runtime_append_all_bundles()
+" For plugins to load correctly
 filetype plugin indent on
 
-compiler ruby
+" TODO: Pick a leader key
+" let mapleader = ","
 
-set hlsearch
+" Security
+set modelines=0
+
+" Show line numbers
 set number
-set showmatch
-set incsearch
-set background=dark
-set hidden
-set backspace=indent,eol,start
+
+" Show file stats
 set ruler
+
+" Blink cursor on error instead of beeping (grr)
+set visualbell
+
+" Encoding
+set encoding=utf-8
+
+" Whitespace
 set wrap
-set dir=/tmp//
-set scrolloff=5
-set nofoldenable
+set textwidth=79
+set formatoptions=tcqrn1
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set noshiftround
 
-set textwidth=0 nosmartindent tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+" Cursor motion
+set scrolloff=3
+set backspace=indent,eol,start
+set matchpairs+=<:> " use % to jump between pairs
+runtime! macros/matchit.vim
 
+" Move up/down editor lines
+nnoremap j gj
+nnoremap k gk
+
+" Allow hidden buffers
+set hidden
+
+" Rendering
+set ttyfast
+
+" Status bar
+set laststatus=2
+
+" Last line
+set showmode
+set showcmd
+
+" Searching
+nnoremap / /\v
+vnoremap / /\v
+set hlsearch
+set incsearch
 set ignorecase
 set smartcase
+set showmatch
+map <leader><space> :let @/=''<cr> " clear search
 
-set wildignore+=*.pyc,*.o,*.class
+" Remap help key.
+inoremap <F1> <ESC>:set invfullscreen<CR>a
+nnoremap <F1> :set invfullscreen<CR>
+vnoremap <F1> :set invfullscreen<CR>
 
-let g:ctrlp_custom_ignore = 'node_modules\|_build'
+" Textmate holdouts
 
-let html_use_css=1
-let html_number_lines=0
-let html_no_pre=1
+" Formatting
+map <leader>q gqip
 
-let g:gist_clip_command = 'pbcopy'
-let g:gist_detect_filetype = 1
+" Visualize tabs and newlines
+set listchars=tab:▸\ ,eol:¬
+" Uncomment this to enable by default:
+" set list " To enable by default
+" Or use your leader key + l to toggle on/off
+map <leader>l :set list!<CR> " Toggle tabs and EOL
 
-let g:rubycomplete_buffer_loading = 1
-
-let g:no_html_toolbar = 'yes'
-
-let coffee_no_trailing_space_error = 1
-
-let go_highlight_trailing_whitespace_error = 0
-let NERDTreeIgnore=['\.pyc$', '\.o$', '\.class$']
-
-let g:NoseVirtualenv = ".env/bin/activate"
-
-let g:ctrlp_match_window = "top,order:ttb"
-
-let g:ctrlp_prompt_mappings = {
-  \ 'PrtSelectMove("j")':   ['<c-n>', '<down>'],
-  \ 'PrtSelectMove("k")':   ['<c-p>','<c-k>', '<up>'],
-  \ 'PrtHistory(-1)':       ['<c-j>'],
-  \ 'PrtHistory(1)':        ['<c-k>'],
-\ }
-
-autocmd FileType php setlocal tabstop=4 shiftwidth=4 softtabstop=4
-autocmd FileType python setlocal tabstop=4 shiftwidth=4 softtabstop=4
-autocmd FileType tex setlocal textwidth=78
-autocmd Filetype go setlocal noexpandtab
-autocmd FileType rust setlocal tabstop=4 shiftwidth=4 softtabstop=4
-autocmd BufNewFile,BufRead *.txt setlocal textwidth=78
-autocmd BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
-
-imap <C-L> <SPACE>=><SPACE>
-map <silent> <LocalLeader>rt :!ctags -R --exclude=".git\|.svn\|log\|tmp\|db\|pkg" --extra=+f --langmap=Lisp:+.clj<CR>
-map <silent> <LocalLeader>nt :NERDTreeToggle<CR>
-map <silent> <LocalLeader>nf :NERDTreeFind<CR>
-map <silent> <leader>ff :CtrlP<CR>
-map <silent> <leader>fb :CtrlPBuffer<CR>
-map <silent> <leader>fr :CtrlPClearCache<CR>
-map <silent> <LocalLeader>nh :nohls<CR>
-map <silent> <LocalLeader>bd :bufdo :bd<CR>
-map <silent> <LocalLeader>cc :TComment<CR>
-
-let g:VimuxOrientation = "h"
-let g:VimuxHeight = "30"
-
-map <silent> <LocalLeader>rl :wa<CR> :VimuxRunLastCommand<CR>
-
-nnoremap <silent> k gk
-nnoremap <silent> j gj
-nnoremap <silent> Y y$
-
-if version >= 700
-  autocmd BufNewFile,BufRead *.txt setlocal spell spelllang=en_us
-  autocmd FileType tex setlocal spell spelllang=en_us
-endif
-
-if &t_Co == 256
-  colorscheme jellybeans
-endif
-
-" Highlight trailing whitespace
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd BufRead,InsertLeave * match ExtraWhitespace /\s\+$/
-
-" Set up highlight group & retain through colorscheme changes
-highlight ExtraWhitespace ctermbg=red guibg=red
-autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
-map <silent> <LocalLeader>ws :highlight clear ExtraWhitespace<CR>
-
-" Highlight too-long lines
-autocmd BufRead,InsertEnter,InsertLeave * 2match LineLengthError /\%126v.*/
-highlight LineLengthError ctermbg=black guibg=black
-autocmd ColorScheme * highlight LineLengthError ctermbg=black guibg=black
-
-set laststatus=2
-set statusline=
-set statusline+=%<\                       " cut at start
-set statusline+=%2*[%n%H%M%R%W]%*\        " buffer number, and flags
-set statusline+=%-40f\                    " relative path
-set statusline+=%=                        " seperate between right- and left-aligned
-set statusline+=%1*%y%*%*\                " file type
-set statusline+=%10(L(%l/%L)%)\           " line
-set statusline+=%2(C(%v/125)%)\           " column
-set statusline+=%P                        " percentage of file
-
-if version >= 703
-  set undodir=~/.vim/undodir
-  set undofile
-  set undoreload=10000 "maximum number lines to save for undo on a buffer reload
-endif
-set undolevels=1000 "maximum number of changes that can be undone
+" Color scheme (terminal)
+set t_Co=256
+set background=dark
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+" put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
+" in ~/.vim/colors/ and uncomment:
+" colorscheme solarized
